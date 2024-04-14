@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use complex_numbers::solution::ComplexNumber;
 
 // for this execise see https://doc.rust-lang.org/beta/std/primitive.f64.html
@@ -83,7 +85,7 @@ pub fn test_enable_copy(){
     assert_eq!(b.to_tuple(), (2.0, 4.0));
 }
 
-/*
+
 #[test]
 pub fn test_default_values() {
     // If we want to create an array of complex numbers we need to initialize values with something
@@ -105,6 +107,7 @@ pub fn test_convert_into_real() {
 
 }
 
+
 #[test]
 pub fn test_panic_when_impossible_to_convert_to_real() {
     // we can convert into a real only if imag is 0
@@ -113,21 +116,31 @@ pub fn test_panic_when_impossible_to_convert_to_real() {
     let result = std::panic::catch_unwind(|| {
         let _: f64 = a.into();
     });
-
     assert!(result.is_err());
 }
+
 
 #[test]
 pub fn test_try_into_f64() {
     // write trait and a test for the Trait TryInto for converting into f64
+    let a = ComplexNumber::new(1.0, 2.0);
+    let b = ComplexNumber::from_real(1.0);
+    let res: Result<f64, String> = a.try_into();
+    let res2: Result<f64, String> = b.try_into(); 
+
     // the test must check both success and error conditions
-    assert!(true);
+    assert!(res.is_err());
+    assert_eq!(res2.unwrap(), 1.0);
 }
 
 #[test]
 pub fn test_try_form_f64() {
     // write a trait allowing let complex = f64.into()
     // and write test
+
+    let complex: ComplexNumber = 2.0.into();
+
+    assert_eq!(complex.to_tuple(), (2.0, 0.0));
 }
 
 
@@ -145,7 +158,7 @@ pub fn test_comparison() {
 #[test]
 pub fn test_sorting() {
     // for sorting we can use the modulus of a complex number 
-    //https://www.cuemath.com/algebra/modulus-of-complex-number/
+    // https://www.cuemath.com/algebra/modulus-of-complex-number/
     // if |a| > |b| than a > b
 
     // Be careful: f64 does not implement Ord since NaN != NaN and you can't 
@@ -217,9 +230,36 @@ pub fn test_hash_with_hash_map() {
 
 
 #[test]
-pub fn test_deque() {}
+pub fn test_deque() {
 
-*/
+    //1.
+    let mut a: VecDeque<ComplexNumber> = VecDeque::with_capacity(10);
+
+    //2.
+    a.push_back(10.0.into());
+    a.push_back(1.0.into());
+    a.push_back(5.0.into());
+    a.push_back(20.0.into());
+    a.push_back(2.5.into());
+    a.push_back(ComplexNumber::new(0.0, 0.0));
+    a.push_back(ComplexNumber::new(3.0, 2.0));
+    a.push_back(ComplexNumber::new(1.0, 4.0));
+    a.push_back(ComplexNumber::from_real(3.0));
+    a.push_back(ComplexNumber::from_real(14.0));
+
+    //4.
+    let result = a.binary_search(&(20.0.into()));
+
+    //5.
+    assert!(result.is_err());
+
+    //3.
+    a.make_contiguous().sort();
+    let result = a.binary_search(&(20.0.into()));
+    assert_eq!(result.unwrap(), 9);
+}
+
+
 
     // implement VecDeque for ComplexNumber
     // 1. create a VecDeque with capacity 10
