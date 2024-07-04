@@ -34,6 +34,8 @@ pub mod cb {
             }
             let mut waiters = vec![];
 
+            recievers = recievers.into_iter().rev().collect();
+
             for i in 0..n_waiters {
                 waiters.push(Waiter{receiver: recievers.pop().unwrap(),
                                     senders: senders.iter().enumerate().filter_map(|(j,s)| {if i==j {None} else {Some(s.clone())}}).collect()})
@@ -49,11 +51,3 @@ pub mod cb {
         }
     }
 }
-
-
-/*
-t1: r1 s2,s3
-t2: r2 s1,s3
-t3: r3 s1,s2
-*/
-
